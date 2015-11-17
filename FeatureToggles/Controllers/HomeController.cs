@@ -1,4 +1,5 @@
 ﻿using FeatureToggles.Controllers.Features;
+using FeatureToggles.Toggles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,12 @@ namespace FeatureToggles.Controllers
     {
         public ActionResult Index()
         {
-            var toggler = new SimpleConfigToggleManager();
+            var toggler = new SimpleConfigToggle();
 
             var isEnabled = toggler.IsActive<HomeTestFeature>();
+
+            var dbToggler = new ExternalToggle();
+            var isDbEnabled = dbToggler.IsActive<HomeTestFeature>();
 
             return View();
         }

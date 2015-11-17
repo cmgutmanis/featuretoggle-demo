@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Toggles
 {
-    public class SimpleConfigToggleManager : IFeatureToggle
+    public class SimpleConfigToggle : IFeatureToggle
     {
 
         public bool IsActive<TFeature>()
