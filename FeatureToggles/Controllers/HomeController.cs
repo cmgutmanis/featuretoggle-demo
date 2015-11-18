@@ -1,4 +1,5 @@
 ﻿using FeatureToggles.Controllers.Features;
+using FeatureToggles.Models;
 using FeatureToggles.Toggles;
 using System;
 using System.Collections.Generic;
@@ -13,14 +14,30 @@ namespace FeatureToggles.Controllers
     {
         public ActionResult Index()
         {
+            var model = new HomeModel();
             var toggler = new SimpleConfigToggle();
 
-            var isEnabled = toggler.IsActive<HomeTestFeature>();
+            #region toggle in web.config
+            //if (toggler.IsActive<HomeTestFeature>())
+            //{
+            //    model.ImageUrl = "\\Images\\image0.jpg";
+            //}
+            #endregion
 
+            #region toggle managed by external database
             var dbToggler = new ExternalToggle();
-            var isDbEnabled = dbToggler.IsActive<HomeTestFeature>();
+            if (dbToggler.IsActive<HomeTestFeature>())
+            {
+                     model.ImageUrl = "\\Images\\image0.jpg";
+            }
+            else
+            {
+                model.ImageUrl = "\\Images\\image1.jpg";
+            }
+            #endregion
 
-            return View();
+
+            return View(model);
         }
     }
 }

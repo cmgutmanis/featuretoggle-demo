@@ -21,21 +21,28 @@ namespace FeatureToggles.Toggles
 
             var cmd = new SqlCommand();
             cmd.CommandText = string.Format("select* from toggle where togglename = \'{0}\'", key);
+
             cmd.CommandType = System.Data.CommandType.Text;
             cmd.Connection = conn;
             var expiry = new DateTime();
-
+            var toggleValue = false;
             using (var result = cmd.ExecuteReader()){
                 while (result.Read())
                 {
-                    var toggleValue = Convert.ToBoolean(result["togglevalue"]);
-                    var toggleExpiry = result["toggleexpiration"] ?? result["toggleexpiration"].ToString();
-                    DateTime.TryParse(toggleExpiry as string, out expiry);
+                    toggleValue = Convert.ToBoolean(result["togglevalue"]);
+                    var toggleExpiry = result["toggleexpiration"] == null ? string.Empty : result["toggleexpiration"].ToString();
+                    if (DateTime.TryParse(toggleExpiry, out expiry))
+                    {
+                        if (expiry < DateTime.Now) // && configuration != production
+                        {
+                            throw new Exception("Feature toggle is expired. Delete or update expiry date");
+                        }
+                    }
                 }
             }
 
             conn.Close();
-            return true;
+            return toggleValue;
         }
     }
 }
